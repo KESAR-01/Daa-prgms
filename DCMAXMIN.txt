@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+// Function to find maximum and minimum using divide and conquer
+void dcmax_min(int a[], int i, int j, int *max, int *min) {
+    int mid, max1, max2, min1, min2;
+
+    // Base case for one element
+    if (i == j) {
+	*max = *min = a[i];
+	return;
+    }
+
+    // Base case for two elements
+    if (i == j - 1)
+     {
+	if (a[i] > a[j])
+	{
+	    *max = a[i];
+	    *min = a[j];
+	}
+	else
+	{
+	    *max = a[j];
+	    *min = a[i];
+	}
+	return;
+    }
+
+    // More than two elements
+    mid = (i + j) / 2;
+
+    // Recursive calls for left and right halves
+    dcmax_min(a, i, mid, &max1, &min1);
+    dcmax_min(a, mid + 1, j, &max2, &min2);
+
+    // Determine max and min using if statements
+    *max = (max1 > max2) ? max1 : max2;
+    *min = (min1 < min2) ? min1 : min2;
+}
+
+int main()
+{
+    int n,a[10],i;
+    int maxValue, minValue;
+
+    // Get the number of elements from the user
+    printf("Enter the number of elements: ");
+    scanf("%d", &n);
+
+    // Check for valid input
+    if (n <= 0) {
+	printf("The number of elements must be positive.\n");
+	return 1; // Exit with error code
+    }
+
+
+
+    // Get the elements from the user
+    printf("Enter %d elements:\n", n);
+    for ( i = 0; i < n; i++) {
+	scanf("%d", &a[i]);
+    }
+
+
+
+    // Call the function with valid indices
+    dcmax_min(a, 0, n - 1, &maxValue, &minValue);
+
+    printf("Maximum element is: %d\n", maxValue);
+    printf("Minimum element is: %d\n", minValue);
+
+    return 0; // Return success
+}
