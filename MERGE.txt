@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <conio.h> // Note: conio.h is not standard and may not be available in all compilers
+
+#define MAX_SIZE 100 // Define a maximum size for the array
+
+void mergesort(int a[], int low, int high);
+void merge(int a[], int low, int mid, int high);
+
+int main() {
+    int a[MAX_SIZE]; // Fixed-size array
+    int n, i;
+
+    // Clear screen (may not work in all environments)
+    clrscr();
+
+    printf("Enter the number of elements: ");
+    scanf("%d", &n); // User inputs the number of elements
+
+    printf("Enter elements into the array:\n");
+    for (i = 0; i < n; i++)
+	scanf("%d", &a[i]); // Input elements into the array
+
+    mergesort(a, 0, n - 1); // Call merge sort
+
+    printf("The sorted array elements:\n");
+    for (i = 0; i < n; i++)
+	printf("%d\n", a[i]); // Print sorted elements
+
+    getch(); // Wait for user input before closing (may not work in all environments)
+    return 0;
+}
+
+void mergesort(int a[], int low, int high) {
+    if (low < high) {
+	int mid = (low + high) / 2; // Find midpoint
+	mergesort(a, low, mid); // Sort first half
+	mergesort(a, mid + 1, high); // Sort second half
+	merge(a, low, mid, high); // Merge sorted halves
+    }
+}
+
+void merge(int a[], int low, int mid, int high) {
+    int i = low;   // Starting index for left subarray
+    int j = mid + 1; // Starting index for right subarray
+    int k = low;   // Index for merged array
+    int c[MAX_SIZE]; // Temporary array to hold merged results
+
+    // Merge the two halves into c[]
+    while (i <= mid && j <= high) {
+	if (a[i] < a[j]) {
+	    c[k] = a[i];
+	    i++;
+	} else {
+	    c[k] = a[j];
+	    j++;
+	}
+	k++;
+    }
+
+    // Copy remaining elements of left subarray, if any
+    while (i <= mid) {
+	c[k] = a[i];
+	i++;
+	k++;
+    }
+
+    // Copy remaining elements of right subarray, if any
+    while (j <= high) {
+	c[k] = a[j];
+	j++;
+	k++;
+    }
+
+    // Copy merged elements back into original array
+    for (i = low; i <= high; i++) {
+	a[i] = c[i];
+    }
+}
