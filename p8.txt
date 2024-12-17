@@ -1,0 +1,36 @@
+#include<stdio.h>
+#include<conio.h>
+#define MAX 10
+void main()
+{
+int a[MAX][MAX],v,e,s,d,i,j;
+clrscr();
+printf("Enter the number of vertices");
+scanf("%d",&v);
+for(i=0;i<v;i++)
+{
+for(j=0;j<v;j++)
+{
+a[i][j]=0;
+}
+}
+printf("Enter number of edges");
+scanf("%d",&e);
+printf("Enter the edges one by one fom source to destination");
+for(i=0;i<e;i++)
+{
+scanf("%d%d",&s,&d);
+a[s][d]=1;
+a[d][s]=1;
+}
+printf("Adjacency matrix\n");
+for(i=0;i<v;i++)
+{
+for(j=0;j<v;j++)
+{
+printf("%d\t",a[i][j]);
+}
+printf("\n");
+}
+getch();
+}
