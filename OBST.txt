@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_KEYS 100 // Maximum number of keys
+
+// Function to calculate the weighted sum of frequencies from i to j
+void calculateWeights(int freq[], int n, int weight[MAX_KEYS][MAX_KEYS]) {
+int i,j;
+    for ( i = 0; i < n; i++) {
+	weight[i][i] = freq[i]; // Weight for single key
+	for ( j = i + 1; j < n; j++) {
+	    weight[i][j] = weight[i][j - 1] + freq[j]; // Cumulative weight
+	}
+    }
+}
+
+// Function to construct the optimal binary search tree
+void optimalBST(int root[MAX_KEYS][MAX_KEYS], int freq[], int n, int cost[MAX_KEYS][MAX_KEYS], int weight[MAX_KEYS][MAX_KEYS]) {
+     int i,j,k,L;
+    calculateWeights(freq, n, weight);
+
+    // Initialize cost and root matrices
+    for ( i = 0; i < n; i++) {
+	cost[i][i] = freq[i]; // Cost for single key
+	root[i][i] = i;       // Root is itself for single key
+    }
+
+    // Calculate costs for chains of length L
+    for ( L = 2; L <= n; L++) { // Length of chain
+	for ( i = 0; i <= n - L; i++) {
+	     j = i + L - 1;
+	    cost[i][j] = INT_MAX; // Initialize cost
+
+	    // Try making each key in keys[i..j] the root
+	    for (k = i; k <= j; k++) {
+		int c = (k > i ? cost[i][k - 1] : 0) +
+			(k < j ? cost[k + 1][j] : 0) +
+			weight[i][j]; // Total cost calculation
+
+		if (c < cost[i][j]) {
+		    cost[i][j] = c;
+		    root[i][j] = k; // Store root index
+		}
+	    }
+	}
+    }
+}
+
+
+// Function to print the OBST structure
+void printOBST(int keys[], int root[MAX_KEYS][MAX_KEYS], int i, int j, int parent, int isLeft) {
+    if (i <= j) {
+	int r = root[i][j];
+
+	if (parent == -1) {
+	    printf("Root: %d\n", keys[r]); // Print root node
+	} else {
+	    if (isLeft) {
+		printf("Left child of %d: %d\n", keys[parent], keys[r]); // Print left child
+	    } else {
+		printf("Right child of %d: %d\n", keys[parent], keys[r]); // Print right child
+	    }
+	}
+
+	printOBST(keys, root, i, r - 1, r, 1); // Left subtree
+	printOBST(keys, root, r + 1, j, r, 0); // Right subtree
+    }
+}
+
+int main() {
+    int n,i;
+    int keys[MAX_KEYS], freq[MAX_KEYS];
+    int cost[MAX_KEYS][MAX_KEYS], root[MAX_KEYS][MAX_KEYS], weight[MAX_KEYS][MAX_KEYS];
+
+    printf("Enter the number of keys: ");
+    scanf("%d", &n);
+
+    printf("Enter the keys: ");
+    for ( i = 0; i < n; i++) {
+	scanf("%d", &keys[i]);
+    }
+
+    printf("Enter the frequencies: ");
+    for ( i = 0; i < n; i++) {
+	scanf("%d", &freq[i]);
+    }
+
+    optimalBST(root, freq,n,cost,weight);
+
+    printf("Optimal BST cost: %d\n", cost[0][n - 1]);
+    printOBST(keys, root, 0, n - 1, -1, 0);
+
+    return 0;
+}
