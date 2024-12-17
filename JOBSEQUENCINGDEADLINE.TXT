@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_JOBS 100
+
+// Function to compare and sort jobs based on profit
+void sort_jobs(int id[], int dl[], int pr[], int n) {
+int i,j,temp_pr,temp_dl,temp_id;
+    for ( i = 0; i < n - 1; i++) {
+	for ( j = 0; j < n - i - 1; j++) {
+	    if (pr[j] < pr[j + 1]) { // Sort in descending order
+		// Swap profits
+		 temp_pr = pr[j];
+		pr[j] = pr[j + 1];
+		pr[j + 1] = temp_pr;
+
+		// Swap deadlines
+		 temp_dl = dl[j];
+		dl[j] = dl[j + 1];
+		dl[j + 1] = temp_dl;
+
+		// Swap job IDs
+		 temp_id = id[j];
+		id[j] = id[j + 1];
+		id[j + 1] = temp_id;
+	    }
+	}
+    }
+}
+
+// Function to perform job sequencing with deadlines using a greedy approach
+void job_sequencing(int id[], int dl[], int pr[], int n) {
+int max_dl = 0; // max_dl: Maximum deadline among all jobs
+int i,j;
+// Initialize slots for scheduling (0 means free)
+    int slots[MAX_JOBS] = {0}; // slots: Array to track scheduled jobs
+    int total_profit = 0; // total_profit: Total profit from scheduled jobs
+    // Sort jobs based on profit in descending order
+    sort_jobs(id, dl, pr, n);
+
+    // Find the maximum deadline to determine the size of the slots array
+
+    for ( i = 0; i < n; i++) {
+	if (dl[i] > max_dl) {
+	    max_dl = dl[i];
+	}
+    }
+
+
+
+    // Schedule jobs
+    for ( i = 0; i < n; i++) {
+	// Find a free slot for this job (going backwards from its deadline)
+	for (j = dl[i] - 1; j >= 0; j--) {
+	    if (slots[j] == 0) { // If slot is free
+		slots[j] = id[i]; // Assign job ID to this slot
+		total_profit += pr[i]; // Add profit to total profit
+		break;
+	    }
+	}
+    }
+
+    // Output scheduled jobs and total profit
+    printf("Scheduled jobs: ");
+    for ( i = 0; i < max_dl; i++) {
+	if (slots[i] != 0) {
+	    printf("%d ", slots[i]);
+	}
+    }
+    printf("\nTotal Profit: %d\n", total_profit);
+}
+
+int main() {
+    int n,i;
+    int id[MAX_JOBS], dl[MAX_JOBS], pr[MAX_JOBS]; // Arrays:
+						  // id: Job IDs
+     clrscr();						  // dl: Deadlines
+						  // pr: Profits
+
+    printf("Enter the number of jobs: ");
+    scanf("%d", &n);
+
+
+
+    printf("Enter job details (ID, deadline, profit) for each job:\n");
+    for ( i = 0; i < n; i++) {
+	printf("Job %d: ", i + 1);
+	scanf("%d %d %d", &id[i], &dl[i], &pr[i]);
+    }
+
+    job_sequencing(id, dl, pr, n);
+
+    return 0;
+}
