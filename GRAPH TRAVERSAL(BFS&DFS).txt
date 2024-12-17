@@ -1,0 +1,93 @@
+#include <stdio.h>
+#include <conio.h> // For getch() function
+
+#define MAX 100
+
+// Function to perform DFS
+void DFS(int adjMatrix[MAX][MAX], int visited[], int vertex, int numVertices) {
+    int i;
+    visited[vertex] = 1; // Mark the vertex as visited
+    printf("%d ", vertex);
+
+   // Declare loop variable here
+    for (i = 0; i < numVertices; i++) {
+        if (adjMatrix[vertex][i] == 1 && !visited[i]) {
+            DFS(adjMatrix, visited, i, numVertices);
+	}
+    }
+}
+
+// Function to perform BFS
+void BFS(int adjMatrix[MAX][MAX], int visited[], int startVertex, int numVertices) {
+    int queue[MAX]; // Declare queue
+    int front = -1; // Initialize front of the queue
+    int rear = -1; // Initialize rear of the queue
+    int i,currentVertex; // Declare loop variable here
+
+    visited[startVertex] = 1; // Mark the starting vertex as visited
+    queue[++rear] = startVertex; // Enqueue the starting vertex
+
+    while (front != rear) {
+	front++;
+	currentVertex = queue[front]; // Get current vertex
+	printf("%d ", currentVertex);
+
+	for (i = 0; i < numVertices; i++) {
+	    if (adjMatrix[currentVertex][i] == 1 && !visited[i]) {
+		visited[i] = 1; // Mark as visited
+		queue[++rear] = i; // Enqueue the connected vertex
+}
+}
+}
+}
+// Main function
+
+int main()
+{
+    int adjMatrix[MAX][MAX]; // Declare adjacency matrix
+    int numVertices, edges, src, dest;
+    int visited[MAX]; // Declare visited array
+
+
+    // Initialize adjacency matrix to zero
+    int j, k;
+    for (j = 0; j < MAX; j++) {
+	for (k = 0; k < MAX; k++) {
+	    adjMatrix[j][k] = 0;
+	}
+    }
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &numVertices);
+
+    printf("Enter number of edges: ");
+    scanf("%d", &edges);
+
+    printf("Enter edges (source destination):\n");
+    for (j = 0; j < edges; j++) {
+	scanf("%d %d", &src, &dest);
+	adjMatrix[src][dest] = 1; // Add edge from src to dest
+	adjMatrix[dest][src] = 1; // Add edge from dest to src (undirected graph)
+    }
+
+
+
+    // Initialize visited array to zero
+    for (j = 0; j < MAX; j++) {
+	visited[j] = 0;
+    }
+
+    printf("DFS starting from vertex 0:\n");
+    DFS(adjMatrix, visited, 0, numVertices); // Perform DFS
+
+    // Resetting the visited array for BFS
+    for (j = 0; j < MAX; j++) { 
+        visited[j] = 0;
+    }
+
+    printf("\nBFS starting from vertex 0:\n");
+    BFS(adjMatrix, visited, 0, numVertices); // Perform BFS
+
+    getch(); // Wait for a key press before exiting
+    return 0;
+}
