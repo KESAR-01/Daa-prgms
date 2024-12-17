@@ -1,0 +1,80 @@
+#include <stdio.h>
+
+#define MAX 30
+
+int edges[MAX][3]; // Array to store edges: edges[i][0] = u, edges[i][1] = v, edges[i][2] = weight
+int parent[MAX];   // Parent array for tracking connected components
+int edgeCount;     // Number of edges
+
+// Function to find the root of a vertex with path compression
+int find(int vertex) {
+    if (parent[vertex] == -1) {
+        return vertex; // If vertex is its own parent, return it
+    }
+    // Path compression
+    return parent[vertex] = find(parent[vertex]);
+}
+
+// Function to sort edges based on weight using bubble sort
+void sortEdges() {
+int i,j,k,temp;
+    for ( i = 0; i < edgeCount - 1; i++) {
+	for (j = 0; j < edgeCount - i - 1; j++) {
+            if (edges[j][2] > edges[j + 1][2]) { // Compare weights
+                // Swap the entire rows of edges[j] and edges[j + 1]
+		for ( k = 0; k < 3; k++) {
+		     temp = edges[j][k];
+                    edges[j][k] = edges[j + 1][k];
+                    edges[j + 1][k] = temp;
+                }
+            }
+        }
+    }
+}
+
+// Function to implement Kruskal's algorithm
+void kruskal(int n) {
+int i;
+int totalCost = 0; // Variable to store total cost of MST
+    // Initialize parent array to -1 (indicating no parent)
+    for ( i = 0; i < n; i++)
+        parent[i] = -1;
+
+    sortEdges(); // Sort edges by weight
+
+    printf("\nEdges in the Minimum Cost Spanning Tree:\n");
+
+
+    for (i = 0; i < edgeCount; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+
+        // Check if adding this edge creates a cycle
+        if (find(u) != find(v)) { // If they are not in the same component
+            printf("Edge (%d, %d) with weight %d\n", u, v, edges[i][2]);
+            totalCost += edges[i][2]; // Add weight to total cost
+            
+            // Union operation: connect u and v
+            parent[find(u)] = find(v); // Set the parent of u's root to v's root
+        }
+    }
+
+    printf("Total cost of Minimum Cost Spanning Tree: %d\n", totalCost);
+}
+
+// Main function for demonstration
+int main() {
+int i;
+    printf("Enter number of edges: ");
+    scanf("%d", &edgeCount);
+    
+    printf("Enter the edges (u v w) where u and v are vertices (0-indexed):\n");
+    for ( i = 0; i < edgeCount; i++) {
+        printf("Edge %d: ", i + 1);
+        scanf("%d %d %d", &edges[i][0], &edges[i][1], &edges[i][2]); // Input format: u v weight
+    }
+
+    kruskal(edgeCount); // Call Kruskal's algorithm
+
+    return 0;
+}
