@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void knapsack(int n, float wi[], float pi[], float M) {
+    float totalProfit = 0.0;
+    float x[10] = {0}; // Array to hold fractions of items taken
+    int i,j;
+    // Iterate over the sorted items
+    for (i = 0; i < n; i++)
+    {
+	if (wi[i] <M)
+	{
+	    // Take the whole item
+	    x[i] = 1.0; // Full item taken
+	    totalProfit += pi[i];
+	   // printf("tp=%f",totalProfit);
+	    M -= wi[i]; // Decrease remaining capacity
+	}
+	else
+	{// Add profit from fraction
+	    break; // Knapsack is full
+	}
+    }
+    if(i<n)
+     // Take fraction of the last item
+    x[i] = M/ wi[i]; // Fraction of the last item taken
+    totalProfit +=(pi[i] * x[i]);
+    printf("Maximum profit: %.2f\n", totalProfit);
+
+    // Print fractions of each item taken
+    printf("Fractions of items taken:\n");
+    for ( j = 0; j < n; j++)
+    {
+      printf("x[%d]: %.2f\n", j + 1, x[j]);
+    }
+}
+
+// Function to sort items based on profit-to-weight ratio in descending order
+int main() {
+    int n;
+    float wi[10], pi[10], M;
+    int i,j;
+    float ratio[10],tempRatio,tempWi,tempPi; // Array to hold profit-to-weight ratios
+   clrscr();
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    printf("Enter weights and profits (wi pi):\n");
+    for ( i = 0; i < n; i++)
+    {
+	scanf("%f%f", &wi[i], &pi[i]);
+    }
+  printf("Enter capacity of knapsack (M): ");
+  scanf("%f", &M); // Input capacity
+
+    // Sort items based on profit-to-weight ratio in descending order
+    //sortItems(n, wi, pi);
+    // Calculate profit-to-weight ratios
+    for (i = 0; i<n; i++)
+    {
+	ratio[i] = pi[i] / wi[i];
+    }
+
+    // Simple bubble sort based on ratio
+    for ( i = 0; i < n ; i++)
+    {
+	for ( j = i+1; j < n ; j++)
+	{
+	    if (ratio[i] < ratio[j])
+	    { // Sort in descending order
+		// Swap ratios
+		tempRatio = ratio[j];
+		ratio[j] = ratio[i];
+		ratio[i] = tempRatio;
+
+		// Swap corresponding weights and profits
+		tempWi = wi[j];
+		wi[j] = wi[i];
+		wi[i] = tempWi;
+
+		tempPi = pi[j];
+		pi[j] = pi[i];
+		pi[i] = tempPi;
+	    }
+	}
+     }
+    knapsack(n, wi, pi, M); // Call knapsack function
+
+    return 0;
+}
